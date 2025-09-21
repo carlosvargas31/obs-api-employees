@@ -2,7 +2,6 @@ const express = require('express');
 const employees = require('./employees.json');
 
 const app = express();
-const PORT = 8000;
 
 app.use(express.json());
 
