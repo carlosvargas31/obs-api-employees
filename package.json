@@ -7,8 +7,9 @@
     "test": "test"
   },
   "scripts": {
-    "test": "jest",
-    "start": "node src/index.js"
+  "test": "jest",
+  "prestart": "npm install",
+  "start": "node src/index.js"
   },
   "keywords": [],
   "author": "",
