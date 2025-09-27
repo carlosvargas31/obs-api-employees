@@ -53,7 +53,7 @@ exports.login = async (req, res, next) => {
 
 exports.details = async (req, res, next) => {
   try {
-    const user = await User.findById(req.params.id)
+    const user = await User.findById(req.user.id)
       .select('-password')
       .populate({
         path: 'posts'

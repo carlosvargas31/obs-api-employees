@@ -10,6 +10,7 @@ app.use(express.json());
 app.use('/api', router);
 
 app.use((err, req, res, next) => {
+  console.error(err);
   if (err.status) {
     res.status(err.status).json({ error: err.message });
   } else {
