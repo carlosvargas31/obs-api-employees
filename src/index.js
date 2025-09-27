@@ -3,8 +3,14 @@ const router = require('./config/routes.config');
 
 require('./config/mongo.config');
 
+const fs = require('fs');
+const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 8000;
+
+// Crear carpeta uploads/avatars si no existe
+const avatarsDir = path.join(__dirname, '../uploads/avatars');
+fs.mkdirSync(avatarsDir, { recursive: true });
 
 app.use(express.json());
 app.use('/api', router);
