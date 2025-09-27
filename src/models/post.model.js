@@ -12,7 +12,8 @@ const postSchema = new mongoose.Schema({
     minlength: 6
   },
   author: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
     required: true
   }
 }, {
