@@ -12,15 +12,21 @@ exports.register = async (req, res, next) => {
   }
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
+    let avatar = undefined;
+    if (req.file) {
+      avatar = `/uploads/avatars/${req.file.filename}`;
+    }
     const user = new User({
       name,
       email,
       password: hashedPassword,
-      bio
+      bio,
+      avatar
     });
     await user.save();
     const userObj = user.toObject();
     delete userObj.password;
+    userObj.activationLink = `http://localhost:8000/api/users/activate/${user._id}`;
     res.status(201).json(userObj);
   } catch (err) {
     if (err.code === 11000) {
@@ -40,6 +46,9 @@ exports.login = async (req, res, next) => {
     if (!user) {
       return next(new UnauthorizedError('Invalid credentials.'));
     }
+    if (!user.active) {
+      return next(new UnauthorizedError('Account not activated.'));
+    }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return next(new UnauthorizedError('Invalid credentials.'));
@@ -51,9 +60,35 @@ exports.login = async (req, res, next) => {
   }
 };
 
+
+exports.activate = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    if (!req.user || req.user.id !== id) {
+      return next(new UnauthorizedError('You are not authorized to activate this user.'));
+    }
+    const user = await User.findById(id);
+    if (!user) {
+      return next(new NotFoundError('User not found'));
+    }
+    if (user.active) {
+      return res.status(200).json({ message: 'Account already activated.' });
+    }
+    user.active = true;
+    await user.save();
+    res.status(200).json({ message: 'Account activated successfully.' });
+  } catch (err) {
+    next(new BadRequestError(err.message));
+  }
+};
+
 exports.details = async (req, res, next) => {
   try {
-    const user = await User.findById(req.user.id)
+    const { id } = req.params;
+    if (!req.user || req.user.id !== id) {
+      return next(new UnauthorizedError('You are not authorized to view this user.'));
+    }
+    const user = await User.findById(id)
       .select('-password')
       .populate({
         path: 'posts'
@@ -61,9 +96,14 @@ exports.details = async (req, res, next) => {
     if (!user) {
       return next(new NotFoundError('User not found'));
     }
-    res.status(200).json(user);
+    const userObj = user.toObject();
+    if (userObj.avatar) {
+      userObj.avatarUrl = `${req.protocol}://${req.get('host')}${userObj.avatar}`;
+    }
+    res.status(200).json(userObj);
   } catch (err) {
     next(new BadRequestError(err.message));
   }
 };
+
 

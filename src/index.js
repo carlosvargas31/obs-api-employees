@@ -8,6 +8,7 @@ const PORT = process.env.PORT || 8000;
 
 app.use(express.json());
 app.use('/api', router);
+app.use('/uploads', express.static('uploads'));
 
 app.use((err, req, res, next) => {
   console.error(err);
