@@ -7,9 +7,9 @@
     "test": "test"
   },
   "scripts": {
-  "test": "jest",
-  "prestart": "npm install",
-  "start": "node src/index.js"
+    "test": "jest",
+    "prestart": "npm install",
+    "start": "node src/index.js"
   },
   "keywords": [],
   "author": "",
@@ -20,7 +20,10 @@
     "supertest": "^7.1.4"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.2",
     "express": "^5.1.0",
-    "mongoose": "^8.18.1"
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.18.1",
+    "validator": "^13.15.15"
   }
 }
