@@ -64,9 +64,6 @@ exports.login = async (req, res, next) => {
 exports.activate = async (req, res, next) => {
   try {
     const { id } = req.params;
-    if (!req.user || req.user.id !== id) {
-      return next(new UnauthorizedError('You are not authorized to activate this user.'));
-    }
     const user = await User.findById(id);
     if (!user) {
       return next(new NotFoundError('User not found'));
